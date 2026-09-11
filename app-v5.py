@@ -1,4 +1,3 @@
-
 import math
 import os
 import sqlite3
@@ -242,7 +241,8 @@ def init_db():
 
     # Verificar si ya hay datos, sino insertamos ejemplos de Montevideo, Uruguay
     cursor.execute("SELECT COUNT(*) FROM mascotas_perdidas")
-    if cursor.fetchone() == 0:
+    row_count = cursor.fetchone()
+    if row_count == 0:
         p1_img = create_placeholder_image("toby.png", "Toby\nGolden Retriever\nDorado\nCollar: SI", (218, 165, 32))
         p2_img = create_placeholder_image("lola.png", "Lola\nCaniche\nBlanco\nRopa: SI", (245, 245, 220))
         p3_img = create_placeholder_image("rocco.png", "Rocco\nMestizo\nNegro/Marron\nCollar: SI", (50, 50, 50))
@@ -439,7 +439,7 @@ if menu == "📊 Panel de Control y Alertas":
     st.markdown("<div class='main-header'>🐾 Panel de Control y Alertas Activas</div>", unsafe_allow_html=True)
     st.markdown("<div class='sub-header'>Monitoreá mascotas perdidas y avistamientos en tiempo real en todo Uruguay.</div>", unsafe_allow_html=True)
     
-    # KPIs rápidos (Extraemos el número con )
+    # KPIs rápidos (Extrayendo el valor de la consulta con )
     conn = get_db_connection()
     c = conn.cursor()
     c.execute("SELECT COUNT(*) FROM mascotas_perdidas WHERE estado = 'activo'")
