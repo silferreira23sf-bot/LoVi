@@ -8,7 +8,7 @@ import plotly.express as px
 import streamlit as st
 
 # =======================================================
-# CONFIGURACIÓN GENERAL Y RUTAS RELATIVAS (Para correr localmente)
+# CONFIGURACIÓN GENERAL Y RUTAS RELATIVAS
 # =======================================================
 DB_PATH = 'encuentracan.db'
 IMAGES_DIR = 'images/'
@@ -45,47 +45,135 @@ MONTEVIDEO_BARRIOS = {
 
 # Configuración de página de Streamlit
 st.set_page_config(
-    page_title="LoVi 🐾 - App de Coincidencia de Mascotas (Uruguay)",
+    page_title="LoVi 🐾 - Red Comunitaria de Mascotas (Uruguay)",
     page_icon="🐾",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Estilos visuales amigables
+# Estilos visuales amigables: Paleta pastel de verdes, amarillos suaves, huellitas y tipografía curva
 st.markdown("""
 <style>
-    /* Estilos globales */
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;600;700&display=swap');
+
+    html, body, [class*="css"] {
+        font-family: 'Quicksand', 'Segoe UI', sans-serif;
+    }
+
     .main-header {
-        font-size: 2.5rem;
+        font-family: 'Fredoka', cursive, sans-serif;
+        font-size: 2.6rem;
         color: #2E7D32; /* Verde bosque */
+        font-weight: 700;
+        margin-bottom: 0.3rem;
+    }
+    
+    .sub-header {
+        font-size: 1.15rem;
+        color: #555555;
+        margin-bottom: 1.8rem;
+    }
+    
+    /* Hero Banner Portada Pastel */
+    .hero-banner {
+        background: linear-gradient(135deg, #E8F5E9 0%, #FFFDE7 50%, #F1F8E9 100%);
+        border: 2px dashed #A5D6A7;
+        border-radius: 24px;
+        padding: 2.5rem 1.5rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 20px rgba(76, 175, 80, 0.08);
+        position: relative;
+    }
+    
+    .hero-title {
+        font-family: 'Fredoka', cursive, sans-serif;
+        color: #1B5E20;
+        font-size: 3.2rem;
         font-weight: 700;
         margin-bottom: 0.5rem;
     }
-    .sub-header {
-        font-size: 1.1rem;
-        color: #555555;
-        margin-bottom: 2rem;
+    
+    .hero-subtitle {
+        font-size: 1.3rem;
+        color: #43A047;
+        font-weight: 600;
+        margin-bottom: 1.2rem;
     }
+
+    .badge-pill {
+        background-color: #FFFFFF;
+        color: #2E7D32;
+        padding: 0.4rem 1.1rem;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        display: inline-block;
+        border: 1.5px solid #C8E6C9;
+        margin: 4px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    }
+    
+    /* Tarjetas Pasteles con Huellitas */
+    .feature-card-green {
+        background: #E8F5E9;
+        border: 2px solid #C8E6C9;
+        border-radius: 18px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        height: 100%;
+    }
+    
+    .feature-card-yellow {
+        background: #FFFDE7;
+        border: 2px solid #FFF59D;
+        border-radius: 18px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        height: 100%;
+    }
+    
+    .feature-card-orange {
+        background: #FFF3E0;
+        border: 2px solid #FFE0B2;
+        border-radius: 18px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        height: 100%;
+    }
+    
+    .card-title {
+        font-family: 'Fredoka', cursive, sans-serif;
+        font-size: 1.35rem;
+        color: #2E7D32;
+        margin-bottom: 0.6rem;
+    }
+
     .emergency-card {
         background-color: #FFFDE7; /* Amarillo crema suave */
-        border-left: 5px solid #FBC02D; /* Amarillo dorado */
+        border-left: 6px solid #FBC02D; /* Amarillo dorado */
         padding: 1.2rem;
-        border-radius: 8px;
+        border-radius: 12px;
         margin-bottom: 1.5rem;
         color: #5D4037;
     }
+    
     .success-card {
-        background-color: #E8F5E9; /* Verde muy claro */
-        border-left: 5px solid #4CAF50; /* Verde brillante */
+        background-color: #E8F5E9; /* Verde pastel suave */
+        border-left: 6px solid #4CAF50; /* Verde brillante */
         padding: 1.2rem;
-        border-radius: 8px;
+        border-radius: 12px;
         margin-bottom: 1.5rem;
         color: #1B5E20;
     }
+    
     .reward-pill {
         background-color: #FFE0B2; /* Naranja pastel */
         color: #E65100;
-        padding: 0.3rem 0.8rem;
+        padding: 0.38rem 0.9rem;
         border-radius: 9999px;
         font-weight: bold;
         font-size: 0.95rem;
@@ -93,6 +181,7 @@ st.markdown("""
         border: 1px solid #FFB74D;
         margin-top: 5px;
     }
+    
     .match-pill-high {
         background-color: #C8E6C9; /* Verde éxito */
         color: #1B5E20;
@@ -102,6 +191,7 @@ st.markdown("""
         font-size: 0.95rem;
         display: inline-block;
     }
+    
     .match-pill-med {
         background-color: #FFF9C4; /* Amarillo moderado */
         color: #F57F17;
@@ -115,32 +205,60 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # =======================================================
-# CONTROL DE PANTALLA (PORTADA / APP PRINCIPAL)
+# CONTROL DE PANTALLA (PORTADA AMIGABLE / APP PRINCIPAL)
 # =======================================================
 if 'pantalla' not in st.session_state:
     st.session_state.pantalla = 'portada'
 
 if st.session_state.pantalla == 'portada':
-    st.markdown("<h1 style='text-align: center; color: #2E7D32;'>🐾 ¡Bienvenid@ a LoVi!</h1>", unsafe_allow_html=True)
-    st.markdown("<h3 style='text-align: center; color: #555555;'>La red comunitaria para reencontrar mascotas en Uruguay 🇺🇾</h3>", unsafe_allow_html=True)
-    st.write("---")
+    # Banner Hero con fondo pastel, tipografía amigable y huellitas
+    st.markdown("""
+    <div class="hero-banner">
+        <div style="font-size: 2.2rem; margin-bottom: 5px;">🐾 🐾 🐾</div>
+        <div class="hero-title">¡Bienvenid@ a LoVi! 🐶🐱</div>
+        <div class="hero-subtitle">La red comunitaria más amigable para reencontrar mascotas en Uruguay 🇺🇾</div>
+        <div>
+            <span class="badge-pill">🐾 100% Gratuito y Solidario</span>
+            <span class="badge-pill">📍 Montevideo y Canelones</span>
+            <span class="badge-pill">⚡ Coincidencias en Tiempo Real</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
+    # 3 Tarjetas informativas con estética pastel
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.markdown("### 📍 Mapa de Barrios")
-        st.write("Visualizá avistamientos y mascotas perdidas en Montevideo y zonas cercanas en tiempo real.")
+        st.markdown("""
+        <div class="feature-card-green">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📍🐾</div>
+            <div class="card-title">Mapa de Barrios</div>
+            <p style="color: #37474F; font-size: 0.98rem;">Visualizá en tiempo real los avistamientos y alertas de mascotas perdidas en Montevideo y alrededores.</p>
+        </div>
+        """, unsafe_allow_html=True)
     with col2:
-        st.markdown("### 🔍 Coincidencias Inteligentes")
-        st.write("Cruzamos datos de color, pelaje, ropa y ubicación para avisarte si hay un posible reencuentro.")
+        st.markdown("""
+        <div class="feature-card-yellow">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔍🐾</div>
+            <div class="card-title">Cruces Inteligentes</div>
+            <p style="color: #37474F; font-size: 0.98rem;">Cruzamos fotos, colores, ropa, chapitas y distancia GPS para conectarte con la persona que vio a tu compañero.</p>
+        </div>
+        """, unsafe_allow_html=True)
     with col3:
-        st.markdown("### 📲 Contacto Directo")
-        st.write("Reportá en menos de 1 minuto y conectate directamente por WhatsApp con los vecinos que vieron a tu mascota.")
+        st.markdown("""
+        <div class="feature-card-orange">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📲🐾</div>
+            <div class="card-title">Contacto Directo</div>
+            <p style="color: #37474F; font-size: 0.98rem;">Reportá una pérdida o avistamiento en menos de 1 minuto y conectate directo por WhatsApp con otros vecinos.</p>
+        </div>
+        """, unsafe_allow_html=True)
     
     st.write("")
     st.write("")
-    col_a, col_b, col_c = st.columns(3)
+    
+    # Botón principal estilizado
+    col_a, col_b, col_c = st.columns([1, 9])
     with col_b:
-        if st.button("🚀 Entrar a la Aplicación", use_container_width=True):
+        if st.button("🚀 ENTRAR A LA APLICACIÓN 🐾", use_container_width=True):
             st.session_state.pantalla = 'app'
             st.rerun()
             
@@ -241,8 +359,8 @@ def init_db():
 
     # Verificar si ya hay datos, sino insertamos ejemplos de Montevideo, Uruguay
     cursor.execute("SELECT COUNT(*) AS total FROM mascotas_perdidas")
-    row = cursor.fetchone()
-    if row and int(row['total']) == 0:
+    r = cursor.fetchone()
+    if r and int(r['total']) == 0:
         p1_img = create_placeholder_image("toby.png", "Toby\nGolden Retriever\nDorado\nCollar: SI", (218, 165, 32))
         p2_img = create_placeholder_image("lola.png", "Lola\nCaniche\nBlanco\nRopa: SI", (245, 245, 220))
         p3_img = create_placeholder_image("rocco.png", "Rocco\nMestizo\nNegro/Marron\nCollar: SI", (50, 50, 50))
@@ -439,7 +557,7 @@ if menu == "📊 Panel de Control y Alertas":
     st.markdown("<div class='main-header'>🐾 Panel de Control y Alertas Activas</div>", unsafe_allow_html=True)
     st.markdown("<div class='sub-header'>Monitoreá mascotas perdidas y avistamientos en tiempo real en todo Uruguay.</div>", unsafe_allow_html=True)
     
-    # KPIs rápidos usando AS total y row['total'] para garantizar tipos numéricos puros
+    # KPIs rápidos usando AS total y int(r['total']) para garantizar entero nativo de Python
     conn = get_db_connection()
     c = conn.cursor()
     c.execute("SELECT COUNT(*) AS total FROM mascotas_perdidas WHERE estado = 'activo'")
@@ -773,7 +891,7 @@ elif menu == "✨ Centro de Coincidencias Inteligentes":
                 if os.path.exists(m['a_foto']):
                     st.image(m['a_foto'], use_container_width=True)
                 st.write(f"📍 **Visto en:** {m['a_zona']} ({m['fecha_avistamiento']})")
-                st.write(f"🎨 **Color:** {a['a_color']} | 🏷️ **Collar:** {'Sí' if m['a_collar'] else 'No'} | 👕 **Ropa:** {'Sí' if m['a_ropa'] else 'No'}")
+                st.write(f"🎨 **Color:** {m['a_color']} | 🏷️ **Collar:** {'Sí' if m['a_collar'] else 'No'} | 👕 **Ropa:** {'Sí' if m['a_ropa'] else 'No'}")
                 st.write(f"📝 **Detalles del vecino:** *\"{m['detalles_observados']}\"*")
                 
             # Acciones de resolución
