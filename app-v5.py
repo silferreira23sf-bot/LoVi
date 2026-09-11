@@ -138,7 +138,7 @@ if st.session_state.pantalla == 'portada':
     
     st.write("")
     st.write("")
-    col_a, col_b, col_c = st.columns([1, 2])
+     col_a, col_b, col_c = st.columns(1 2)
     with col_b:
         if st.button("🚀 Entrar a la Aplicación", use_container_width=True):
             st.session_state.pantalla = 'app'
