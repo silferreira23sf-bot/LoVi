@@ -43,7 +43,6 @@ MONTEVIDEO_BARRIOS = {
     "Maldonado / Punta del Este 🐬": (-34.9100, -54.9500),
 }
 
-
 # Configuración de página de Streamlit
 st.set_page_config(
     page_title="LoVi 🐾 - App de Coincidencia de Mascotas (Uruguay)",
@@ -114,6 +113,44 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
+
+# =======================================================
+# CONTROL DE PANTALLA (PORTADA / APP PRINCIPAL)
+# =======================================================
+if 'pantalla' not in st.session_state:
+    st.session_state.pantalla = 'portada'
+
+if st.session_state.pantalla == 'portada':
+    st.markdown("<h1 style='text-align: center; color: #2E7D32;'>🐾 ¡Bienvenid@ a LoVi!</h1>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center; color: #555555;'>La red comunitaria para reencontrar mascotas en Uruguay 🇺🇾</h3>", unsafe_allow_html=True)
+    st.write("---")
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.markdown("### 📍 Mapa de Barrios")
+        st.write("Visualizá avistamientos y mascotas perdidas en Montevideo y zonas cercanas en tiempo real.")
+    with col2:
+        st.markdown("### 🔍 Coincidencias Inteligentes")
+        st.write("Cruzamos datos de color, pelaje, ropa y ubicación para avisarte si hay un posible reencuentro.")
+    with col3:
+        st.markdown("### 📲 Contacto Directo")
+        st.write("Reportá en menos de 1 minuto y conectate directamente por WhatsApp con los vecinos que vieron a tu mascota.")
+    
+    st.write("")
+    st.write("")
+    col_a, col_b, col_c = st.columns([1, 2])
+    with col_b:
+        if st.button("🚀 Entrar a la Aplicación", use_container_width=True):
+            st.session_state.pantalla = 'app'
+            st.rerun()
+            
+    # Detiene la ejecución para mostrar únicamente la portada hasta hacer clic
+    st.stop()
+
+# Botón en la barra lateral para volver a la portada en cualquier momento
+if st.sidebar.button("🏠 Inicio / Portada"):
+    st.session_state.pantalla = 'portada'
+    st.rerun()
 
 # =======================================================
 # MOTOR DE BASE DE DATOS Y PLACEHOLDERS
@@ -204,7 +241,7 @@ def init_db():
 
     # Verificar si ya hay datos, sino insertamos ejemplos de Montevideo, Uruguay
     cursor.execute("SELECT COUNT(*) FROM mascotas_perdidas")
-    if cursor.fetchone()[0] == 0:
+    if cursor.fetchone() == 0:
         p1_img = create_placeholder_image("toby.png", "Toby\nGolden Retriever\nDorado\nCollar: SI", (218, 165, 32))
         p2_img = create_placeholder_image("lola.png", "Lola\nCaniche\nBlanco\nRopa: SI", (245, 245, 220))
         p3_img = create_placeholder_image("rocco.png", "Rocco\nMestizo\nNegro/Marron\nCollar: SI", (50, 50, 50))
@@ -405,15 +442,15 @@ if menu == "📊 Panel de Control y Alertas":
     conn = get_db_connection()
     c = conn.cursor()
     c.execute("SELECT COUNT(*) FROM mascotas_perdidas WHERE estado = 'activo'")
-    total_perdidos = c.fetchone()[0]
+    total_perdidos = c.fetchone()
     
     c.execute("SELECT COUNT(*) FROM avistamientos WHERE estado = 'pendiente'")
-    total_avistamientos = c.fetchone()[0]
+    total_avistamientos = c.fetchone()
     
     # Calcular coincidencias con score >= 60%
     run_matching_engine_for_all()
     c.execute("SELECT COUNT(*) FROM coincidencias WHERE score_similitud >= 60.0")
-    total_matches = c.fetchone()[0]
+    total_matches = c.fetchone()
     conn.close()
     
     col1, col2, col3 = st.columns(3)
@@ -713,7 +750,7 @@ elif menu == "✨ Centro de Coincidencias Inteligentes":
                 
             st.markdown(f"### {score_html}", unsafe_allow_html=True)
             
-            col_pet, col_vs, col_sighting = st.columns([5, 1, 5])
+            col_pet, col_vs, col_sighting = st.columns([1, 3])
             
             with col_pet:
                 st.markdown(f"**🐕 Mascota Buscada: {m['nombre']}** ({m['raza']})")
@@ -736,7 +773,7 @@ elif menu == "✨ Centro de Coincidencias Inteligentes":
                 st.write(f"📝 **Detalles del vecino:** *\"{m['detalles_observados']}\"*")
                 
             # Acciones de resolución
-            col_act1, col_act2, col_act3 = st.columns([4, 3, 3])
+            col_act1, col_act2, col_act3 = st.columns([4, 5])
             with col_act1:
                 # Generar enlace pre-llenado de WhatsApp con el código de país de Uruguay (+598)
                 msg = f"¡Hola! Vi el reporte de tu mascota {m['nombre']} en LoVi. Encontramos un avistamiento muy similar en {m['a_zona']}. ¡Ojalá sea él!"
