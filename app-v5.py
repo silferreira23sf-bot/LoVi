@@ -1,3 +1,4 @@
+
 import math
 import os
 import sqlite3
@@ -255,7 +256,7 @@ if st.session_state.pantalla == 'portada':
     st.write("")
     st.write("")
     
-    # Botón principal alineado en 3 columnas (Exactamente 3 proporciones para 3 variables)
+    # Botón principal alineado en 3 columnas exactamente proporcionales [1, 2]
     col_a, col_b, col_c = st.columns([1, 2])
     with col_b:
         if st.button("🚀 ENTRAR A LA APLICACIÓN 🐾", use_container_width=True):
