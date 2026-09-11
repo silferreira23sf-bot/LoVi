@@ -1,11 +1,12 @@
-import streamlit as st
-import sqlite3
-import pandas as pd
-import plotly.express as px
-import os
+
 import math
+import os
+import sqlite3
 from datetime import date, datetime, timedelta
+import pandas as pd
 from PIL import Image, ImageDraw
+import plotly.express as px
+import streamlit as st
 
 # =======================================================
 # CONFIGURACIÓN GENERAL Y RUTAS RELATIVAS (Para correr localmente)
@@ -51,7 +52,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Estilos visuales amigables: Verdes cálidos, amarillos suaves y tipografía limpia
+# Estilos visuales amigables
 st.markdown("""
 <style>
     /* Estilos globales */
@@ -138,7 +139,7 @@ if st.session_state.pantalla == 'portada':
     
     st.write("")
     st.write("")
-     col_a, col_b, col_c = st.columns(1 2)
+    col_a, col_b, col_c = st.columns(3)
     with col_b:
         if st.button("🚀 Entrar a la Aplicación", use_container_width=True):
             st.session_state.pantalla = 'app'
