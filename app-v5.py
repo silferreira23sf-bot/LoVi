@@ -1,4 +1,3 @@
-
 import math
 import os
 import sqlite3
@@ -509,7 +508,7 @@ if menu == "📊 Panel de Control y Alertas":
         for p in perdidas:
             recompensa_str = f" | 💰 **Recompensa:** {p['monto_recompensa']}" if p['monto_recompensa'] and p['monto_recompensa'] != 'Sin recompensa' else ""
             with st.expander(f"🐶 {p['nombre']} - {p['raza']} ({p['zona_nombre']})"):
-                col_img, col_txt = st.columns([1, 2])
+                col_img, col_txt = st.columns()
                 with col_img:
                     if os.path.exists(p['foto_path']):
                         st.image(p['foto_path'], use_container_width=True)
@@ -529,7 +528,7 @@ if menu == "📊 Panel de Control y Alertas":
         
         for a in avistamientos:
             with st.expander(f"📍 Avistamiento en {a['zona_nombre']} ({a['fecha_avistamiento']})"):
-                col_img, col_txt = st.columns([1, 2])
+                col_img, col_txt = st.columns()
                 with col_img:
                     if os.path.exists(a['foto_path']):
                         st.image(a['foto_path'], use_container_width=True)
@@ -751,7 +750,7 @@ elif menu == "✨ Centro de Coincidencias Inteligentes":
                 
             st.markdown(f"### {score_html}", unsafe_allow_html=True)
             
-            col_pet, col_vs, col_sighting = st.columns([1, 3])
+            col_pet, col_vs, col_sighting = st.columns()
             
             with col_pet:
                 st.markdown(f"**🐕 Mascota Buscada: {m['nombre']}** ({m['raza']})")
@@ -774,7 +773,7 @@ elif menu == "✨ Centro de Coincidencias Inteligentes":
                 st.write(f"📝 **Detalles del vecino:** *\"{m['detalles_observados']}\"*")
                 
             # Acciones de resolución
-            col_act1, col_act2, col_act3 = st.columns([4, 5])
+            col_act1, col_act2, col_act3 = st.columns()
             with col_act1:
                 # Generar enlace pre-llenado de WhatsApp con el código de país de Uruguay (+598)
                 msg = f"¡Hola! Vi el reporte de tu mascota {m['nombre']} en LoVi. Encontramos un avistamiento muy similar en {m['a_zona']}. ¡Ojalá sea él!"
