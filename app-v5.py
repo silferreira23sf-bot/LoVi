@@ -240,9 +240,9 @@ def init_db():
         conn.commit()
 
     # Verificar si ya hay datos, sino insertamos ejemplos de Montevideo, Uruguay
-    cursor.execute("SELECT COUNT(*) FROM mascotas_perdidas")
+    cursor.execute("SELECT COUNT(*) AS total FROM mascotas_perdidas")
     row = cursor.fetchone()
-    if row and row == 0:
+    if row and int(row['total']) == 0:
         p1_img = create_placeholder_image("toby.png", "Toby\nGolden Retriever\nDorado\nCollar: SI", (218, 165, 32))
         p2_img = create_placeholder_image("lola.png", "Lola\nCaniche\nBlanco\nRopa: SI", (245, 245, 220))
         p3_img = create_placeholder_image("rocco.png", "Rocco\nMestizo\nNegro/Marron\nCollar: SI", (50, 50, 50))
@@ -439,22 +439,22 @@ if menu == "📊 Panel de Control y Alertas":
     st.markdown("<div class='main-header'>🐾 Panel de Control y Alertas Activas</div>", unsafe_allow_html=True)
     st.markdown("<div class='sub-header'>Monitoreá mascotas perdidas y avistamientos en tiempo real en todo Uruguay.</div>", unsafe_allow_html=True)
     
-    # KPIs rápidos (Extrayendo el número limpio con )
+    # KPIs rápidos usando AS total y row['total'] para garantizar tipos numéricos puros
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute("SELECT COUNT(*) FROM mascotas_perdidas WHERE estado = 'activo'")
+    c.execute("SELECT COUNT(*) AS total FROM mascotas_perdidas WHERE estado = 'activo'")
     r1 = c.fetchone()
-    total_perdidos = r1 if r1 else 0
+    total_perdidos = int(r1['total']) if r1 else 0
     
-    c.execute("SELECT COUNT(*) FROM avistamientos WHERE estado = 'pendiente'")
+    c.execute("SELECT COUNT(*) AS total FROM avistamientos WHERE estado = 'pendiente'")
     r2 = c.fetchone()
-    total_avistamientos = r2 if r2 else 0
+    total_avistamientos = int(r2['total']) if r2 else 0
     
     # Calcular coincidencias con score >= 60%
     run_matching_engine_for_all()
-    c.execute("SELECT COUNT(*) FROM coincidencias WHERE score_similitud >= 60.0")
+    c.execute("SELECT COUNT(*) AS total FROM coincidencias WHERE score_similitud >= 60.0")
     r3 = c.fetchone()
-    total_matches = r3 if r3 else 0
+    total_matches = int(r3['total']) if r3 else 0
     conn.close()
     
     col1, col2, col3 = st.columns(3)
@@ -773,7 +773,7 @@ elif menu == "✨ Centro de Coincidencias Inteligentes":
                 if os.path.exists(m['a_foto']):
                     st.image(m['a_foto'], use_container_width=True)
                 st.write(f"📍 **Visto en:** {m['a_zona']} ({m['fecha_avistamiento']})")
-                st.write(f"🎨 **Color:** {m['a_color']} | 🏷️ **Collar:** {'Sí' if m['a_collar'] else 'No'} | 👕 **Ropa:** {'Sí' if m['a_ropa'] else 'No'}")
+                st.write(f"🎨 **Color:** {a['a_color']} | 🏷️ **Collar:** {'Sí' if m['a_collar'] else 'No'} | 👕 **Ropa:** {'Sí' if m['a_ropa'] else 'No'}")
                 st.write(f"📝 **Detalles del vecino:** *\"{m['detalles_observados']}\"*")
                 
             # Acciones de resolución
